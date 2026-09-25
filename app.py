@@ -69,4 +69,7 @@ if is_valid:
     shopify_checkout_url = f"https://thelittleknittingcompany.co.uk{cart_slug}"
     
     st.write("---")
-    Send Complete Set to Shop Cart", shopify_checkout_url, use_container_width=True)
+   # DO NOT use a standard st.button with custom click logic.
+    # Use this exact native component instead:
+    st.link_button("🛒 Send Complete Set to Shop Cart", shopify_checkout_url, use_container_width=True)
+
