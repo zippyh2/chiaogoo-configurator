@@ -106,6 +106,14 @@
             outline: none;
             border-color: #960057;
         }
+        <!-- COMPATIBILITY READOUTS & SAFETY CHECKBOX -->
+        <div id="compatibilityAlert" class="alert-box success"></div>
+    
+        <div id="safetyCheckboxContainer" style="display: none; background-color: #FFF9E6; border: 1px solid #FCEBB6; border-top: none; padding: 0px 15px 15px 15px; border-radius: 0 0 6px 6px; font-size: 13px; margin-top: -20px; margin-bottom: 15px; align-items: center; gap: 10px;">
+        <input type="checkbox" id="safetyAcknowledge" onchange="toggleSafetyApproval()" style="width: 18px; height: 18px; cursor: pointer; margin: 0; accent-color: #960057;">
+        <label for="safetyAcknowledge" style="margin: 0; cursor: pointer; font-weight: 500; color: #8A6D1C;">I understand these parts are not natively compatible, but I wish to proceed anyway.</label>
+        </div>
+
         
         /* Message Layout Statuses */
         .alert-box { padding: 12px 15px; border-radius: 6px; font-size: 13px; margin-top: 20px; display: none; line-height: 1.5; }
@@ -446,6 +454,7 @@
     }
 
     // --- 2. LOGIC MATCH ENGINE RULES ---
+        // --- 2. LOGIC MATCH ENGINE RULES ---
     function evaluateSystem() {
         const tipEl = document.getElementById("tipDiameter");
         const cableEl = document.getElementById("cableLength");
@@ -456,8 +465,16 @@
         const cableConn = cableEl.options[cableEl.selectedIndex].getAttribute("data-conn");
         
         const alertDiv = document.getElementById("compatibilityAlert");
+        const safetyWrapper = document.getElementById("safetyCheckboxContainer");
+        const safetyCheckbox = document.getElementById("safetyAcknowledge");
         const upsellWrapper = document.getElementById("upsellWrapper");
-        alertDiv.className = "alert-box"; // Reset states
+        const checkoutBtn = document.querySelector(".checkout-btn");
+        
+        alertDiv.className = "alert-box"; // Reset classes
+        safetyWrapper.style.display = "none"; // Hide safety check by default
+        checkoutBtn.disabled = false; // Enable button by default
+        checkoutBtn.style.opacity = "1";
+        checkoutBtn.style.cursor = "pointer";
         
         let cartItems = [`${tipEl.value}:1`, `${cableEl.value}:1`];
         let setupValid = true;
@@ -465,18 +482,33 @@
         if (tipConn === cableConn) {
             alertDiv.innerText = `✅ Perfect Combination! Both components run natively on the ChiaoGoo '${tipConn}' platform.`;
             alertDiv.classList.add("success");
+            alertDiv.style.borderRadius = "6px";
         } else if (tipConn === "Large" && cableConn === "Small") {
             alertDiv.innerText = `💡 Mix & Match Configuration: You paired a Large Tip with a Small Cable. A 'Large to Small Adaptor' has been automatically added to make them fit perfectly.`;
             alertDiv.classList.add("warning");
+            alertDiv.style.borderRadius = "6px";
             cartItems.push(`${ADAPTERS.Large_to_Small}:1`);
         } else if (tipConn === "Small" && cableConn === "Mini") {
             alertDiv.innerText = `💡 Mix & Match Configuration: You paired a Small Tip with a Mini Cable. A 'Small to Mini Adaptor' has been automatically added to make them fit perfectly.`;
             alertDiv.classList.add("warning");
+            alertDiv.style.borderRadius = "6px";
             cartItems.push(`${ADAPTERS.Small_to_Mini}:1`);
         } else {
-            alertDiv.innerText = `⚠️ Incompatible Choice: There is no standard adaptor pathway to bridge a ${tipConn} tip directly with a ${cableConn} cable size footprint.`;
+            // True Incompatible Combination (e.g., Mini Tip to Large Cable)
+            alertDiv.innerText = `⚠️ Incompatible Choice: A ${tipConn} tip cannot natively connect to a ${cableConn} cable footprint.`;
             alertDiv.classList.add("warning");
+            alertDiv.style.borderRadius = "6px 6px 0 0"; // Flatten bottom corners to attach checkbox seamlessly
+            
+            // Activate the safety wall
+            safetyWrapper.style.display = "flex";
             setupValid = false;
+            
+            // Check if the user has already checked the confirmation box
+            if (!safetyCheckbox.checked) {
+                checkoutBtn.disabled = true;
+                checkoutBtn.style.opacity = "0.4";
+                checkoutBtn.style.cursor = "not-allowed";
+            }
         }
 
         // Handle Dynamic Swivel Upsell Target Rendering
@@ -490,7 +522,12 @@
             document.getElementById("swivelUpsell").checked = false;
         }
 
-        targetLink = "https://thelittleknittingcompany.co.uk/cart/" + cartItems.join(",");
+        targetLink = "https://thelittleknittingcompany.co.uk" + cartItems.join(",");
+    }
+
+    // Companion function that watches the checkbox toggle state
+    function toggleSafetyApproval() {
+        evaluateSystem(); // Re-run evaluation engine logic when ticked
     }
 
     function triggerShopifyRedirect() {
