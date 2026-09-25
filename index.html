@@ -1,109 +1,326 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-GB">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChiaoGoo Needle Configurator</title>
+    <title>ChiaoGoo Interactive Needle Configurator</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f9f9f9; color: #333; padding: 20px; display: flex; justify-content: center; }
-        .card { background: white; max-width: 450px; width: 100%; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        h1 { font-size: 22px; text-align: center; margin-bottom: 20px; color: #111; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f4f6f9; color: #333; padding: 20px; display: flex; justify-content: center; }
+        .builder-card { background: white; max-width: 550px; width: 100%; padding: 30px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        h1 { font-size: 24px; text-align: center; margin-bottom: 5px; color: #111; }
+        .subtitle { text-align: center; font-size: 14px; color: #666; margin-bottom: 25px; }
+        .section-title { font-weight: bold; font-size: 16px; border-bottom: 2px solid #eee; padding-bottom: 8px; margin-top: 25px; margin-bottom: 15px; color: #222; }
+        
+        .grid-options { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .cable-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .option-card { border: 2px solid #ebd; border-radius: 10px; padding: 12px; text-align: center; cursor: pointer; transition: all 0.2s; background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: space-between; }
+        .option-card:hover { border-color: #ff4b4b; background-color: #fff9f9; }
+        .option-card.selected { border-color: #ff4b4b; background-color: #ffeded; font-weight: bold; }
+        .option-card img { width: 100%; max-width: 100px; height: 70px; border-radius: 6px; margin-bottom: 8px; object-fit: cover; background: #fdfdfd; }
+        
         label { font-weight: bold; display: block; margin-top: 15px; margin-bottom: 5px; font-size: 14px; }
-        select { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ccc; font-size: 16px; background-color: #fff; margin-bottom: 10px; }
-        .alert { padding: 12px; border-radius: 8px; font-size: 14px; margin-top: 15px; display: none; line-height: 1.4; }
+        select { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ccc; font-size: 16px; background-color: #fff; margin-bottom: 15px; }
+        
+        .alert-box { padding: 15px; border-radius: 10px; font-size: 14px; margin-top: 20px; display: none; line-height: 1.5; }
         .success { background-color: #e6f4ea; color: #137333; border: 1px solid #ceead6; display: block; }
-        .warning { background-color: #fef7e0; color: #b06000; border: 1px solid #feefc3; }
-        .error { background-color: #fce8e6; color: #c5221f; border: 1px solid #fad2cf; }
-        button { width: 100%; background-color: #ff4b4b; color: white; padding: 14px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 20px; transition: background 0.2s; }
-        button:hover { background-color: #e03e3e; }
-        button:disabled { background-color: #cccccc; cursor: not-allowed; }
+        .warning { background-color: #fdf7e0; color: #b06000; border: 1px solid #feefc3; display: block; }
+        
+        .upsell-container { background: #fdfdfd; border: 1px dashed #ff4b4b; padding: 15px; border-radius: 10px; margin-top: 20px; display: none; align-items: center; gap: 12px; }
+        .upsell-container input { width: 20px; height: 20px; cursor: pointer; margin: 0; }
+        
+        .checkout-btn { width: 100%; background-color: #ff4b4b; color: white; padding: 16px; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 25px; box-shadow: 0 4px 12px rgba(255,75,75,0.2); }
+        .checkout-btn:hover { background-color: #e03e3e; }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <h1>🧶 ChiaoGoo Configurator</h1>
-    <p style="font-size: 14px; color: #666; text-align: center; margin-top: -10px;">The Little Knitting Company</p>
+<div class="builder-card">
+    <h1>🧶 ChiaoGoo Custom Configuration Engine</h1>
+    <p class="subtitle">The Little Knitting Company</p>
+
+    <!-- STEP 1: NEEDLE TIPS -->
+    <div class="section-title">1. Customise Your Needle Tips</div>
     
-    <label for="tipSelect">1. Choose Your Needle Tip Diameter:</label>
-    <select id="tipSelect" onchange="checkCompatibility()">
-        <option value="6523146109270" data-group="Mini">1.5mm [M]</option>
-        <option value="6523146240342" data-group="Mini">2.5mm [M]</option>
-        <option value="6523146371414" data-group="Small">3.5mm [S]</option>
-        <option value="6523146502486" data-group="Small" selected>5.0mm [S]</option>
-        <option value="6523146535254" data-group="Large">5.5mm [L]</option>
-        <option value="6523146764630" data-group="Large">10.0mm [L]</option>
-    </select>
+    <label>Select Needle Tip Material/Style:</label>
+    <div class="grid-options">
+        <div class="option-card selected" id="style-twist" onclick="selectTipStyle('TWIST')">
+            <img src="https://shopify.com" alt="TWIST Stainless Steel">
+            <div>TWIST (Steel)</div>
+        </div>
+        <div class="option-card" id="style-spin" onclick="selectTipStyle('SPIN')">
+            <img src="https://shopify.com" alt="SPIN Bamboo">
+            <div>SPIN (Bamboo)</div>
+        </div>
+        <div class="option-card" id="style-forte" onclick="selectTipStyle('Forté')">
+            <img src="https://shopify.com" alt="Forté Carbon Fibre">
+            <div>Forté (Carbon)</div>
+        </div>
+    </div>
 
-    <label for="cableSelect">2. Choose Your Cable Style & Length:</label>
-    <select id="cableSelect" onchange="checkCompatibility()">
-        <option value="6523138670934" data-group="Mini">14in TWIST Red (Mini)</option>
-        <option value="6523138834774" data-group="Small" selected>14in TWIST Red (Small)</option>
-        <option value="6523139031382" data-group="Large">14in TWIST Red (Large)</option>
-        <option value="6523137786198" data-group="Small">14in SWIV360 Silver (Small)</option>
-        <option value="6523138081110" data-group="Large">14in SWIV360 Silver (Large)</option>
-    </select>
+    <label for="tipLength">Select Needle Tip Length:</label>
+    <select id="tipLength" onchange="populateDiameters()"></select>
 
-    <div id="statusAlert" class="alert success">✅ Perfect Match! Both items belong to the same ChiaoGoo ecosystem.</div>
+    <label for="tipDiameter">Select Needle Tip Diameter:</label>
+    <select id="tipDiameter" onchange="evaluateSystem()"></select>
 
-    <button id="checkoutBtn" onclick="goToCheckout()">🛒 Send Complete Set to Shop Cart</button>
+    <!-- STEP 2: CABLES -->
+    <div class="section-title">2. Choose Your Matching Cable</div>
+    
+    <label>Select Cable Type:</label>
+    <div class="cable-grid">
+        <div class="option-card selected" id="cable-swiv360" onclick="selectCableType('SWIV360')">
+            <img src="https://shopify.com" alt="SWIV360 Cables">
+            <div>SWIV360 (Silver)</div>
+        </div>
+        <div class="option-card" id="cable-red" onclick="selectCableType('Red Lace')">
+            <img src="https://shopify.com" alt="TWIST Red Lace Cables">
+            <div>Red Lace (Twist)</div>
+        </div>
+        <div class="option-card" id="cable-blue" onclick="selectCableType('Blue X-Flex')">
+            <img src="https://shopify.com" alt="Blue X-Flex Cables">
+            <div>Blue X-Flex</div>
+        </div>
+        <div class="option-card" id="cable-spin" onclick="selectCableType('SPIN Swivel Nylon')">
+            <img src="https://shopify.com" alt="SPIN Cables">
+            <div>SPIN Swivel Nylon</div>
+        </div>
+    </div>
+
+    <label for="cableLength">Select Cable Length:</label>
+    <select id="cableLength" onchange="evaluateSystem()"></select>
+
+    <!-- COMPATIBILITY READOUTS -->
+    <div id="compatibilityAlert" class="alert-box success"></div>
+
+    <!-- UPSELL TARGET MAPPING -->
+    <div class="upsell-container" id="upsellWrapper">
+        <input type="checkbox" id="swivelUpsell" onchange="evaluateSystem()">
+        <div>
+            <label style="margin:0; font-size:14px; cursor:pointer;" for="swivelUpsell">✨ Add a Matching ChiaoGoo Swivel Adapter?</label>
+            <span style="font-size:12px; color:#666; display:block;">Prevents matching cables from twisting up mid-project.</span>
+        </div>
+    </div>
+
+    <button class="checkout-btn" onclick="triggerShopifyRedirect()">🛒 Send Selection to Shopping Cart</button>
 </div>
 
 <script>
-    // Database for adapters
-    const adapters = {
-        "Small_to_Mini": "6523146994006",
-        "Large_to_Small": "6523146961238"
-    };
-
-    let calculatedUrl = "";
-
-    function checkCompatibility() {
-        const tipElement = document.getElementById("tipSelect");
-        const cableElement = document.getElementById("cableSelect");
-        
-        const tipGroup = tipElement.options[tipElement.selectedIndex].getAttribute("data-group");
-        const tipId = tipElement.value;
-        
-        const cableGroup = cableElement.options[cableElement.selectedIndex].getAttribute("data-group");
-        const cableId = cableElement.value;
-        
-        const alertBox = document.getElementById("statusAlert");
-        const btn = document.getElementById("checkoutBtn");
-        
-        let variants = [`${tipId}:1`, `${cableId}:1`];
-        btn.disabled = false;
-        alertBox.className = "alert"; // Reset styles
-
-        if (tipGroup === cableGroup) {
-            alertBox.innerText = `✅ Perfect Match! Both items belong to the ChiaoGoo '${tipGroup}' ecosystem.`;
-            alertBox.classList.add("success");
-        } else if (tipGroup === "Small" && cableGroup === "Mini") {
-            alertBox.innerText = `💡 Notice: You matched a Small Tip with a Mini Cable. We've automatically added a 'Small Tip to Mini Cable Adapter' so they fit seamlessly!`;
-            alertBox.classList.add("warning");
-            variants.push(`${adapters.Small_to_Mini}:1`);
-        } else if (tipGroup === "Large" && cableGroup === "Small") {
-            alertBox.innerText = `💡 Notice: You matched a Large Tip with a Small Cable. We've automatically added a 'Large Tip to Small Cable Adapter' so they fit seamlessly!`;
-            alertBox.classList.add("warning");
-            variants.push(`${adapters.Large_to_Small}:1`);
-        } else {
-            alertBox.innerText = `⚠️ Incompatible: There is no standard adapter available to connect a ${tipGroup} Tip to a ${cableGroup} Cable.`;
-            alertBox.classList.add("error");
-            btn.disabled = true;
-            return;
-        }
-
-        calculatedUrl = "https://www.thelittleknittingcompany.co.uk/cart/" + variants.join(",");
-    }
-
-    function goToCheckout() {
-        // Because we are hosted openly on Netlify, this native location shift cannot be blocked!
-        window.location.href = calculatedUrl;
-    }
-
-    // Run once at launch
-    checkCompatibility();
-</script>
-
-</body>
-</html>
+    // --- 1. HARVESTED REAL SHOP DEPLOYMENT DATABASE ---
+    const DB_TIPS = [
+        { style: "SPIN", length: "4in", size: "2.75mm", id: "50788908826966", conn: "Small" },
+        { style: "SPIN", length: "4in", size: "3mm", id: "50788908859734", conn: "Small" },
+        { style: "SPIN", length: "4in", size: "3.25mm", id: "50788908892502", conn: "Small" },
+        { style: "SPIN", length: "4in", size: "3.5mm", id: "50788908925270", conn: "Small" },
+        { style: "SPIN", length: "4in", size: "3.75mm", id: "50788908958038", conn: "Small" },
+        { style: "SPIN", length: "4in", size: "4mm", id: "50788908990806", conn: "Small" },
+        { style: "SPIN", length: "4in", size: "4.5mm", id: "50788909023574", conn: "Small" },
+        { style: "SPIN", length: "4in", size: "5mm", id: "50788909056342", conn: "Small" },
+        { style: "SPIN", length: "4in", size: "5.5mm", id: "50788909089110", conn: "Large" },
+        { style: "SPIN", length: "4in", size: "6mm", id: "50788909121878", conn: "Large" },
+        { style: "SPIN", length: "4in", size: "6.5mm", id: "50788909154646", conn: "Large" },
+        { style: "SPIN", length: "4in", size: "7mm", id: "50788909187414", conn: "Large" },
+        { style: "SPIN", length: "4in", size: "7.5mm", id: "50788909220182", conn: "Large" },
+        { style: "SPIN", length: "4in", size: "8mm", id: "50788909252950", conn: "Large" },
+        { style: "SPIN", length: "4in", size: "9mm", id: "50788909285718", conn: "Large" },
+        { style: "SPIN", length: "4in", size: "10mm", id: "50788909318486", conn: "Large" },
+        { style: "SPIN", length: "5in", size: "2.75mm", id: "50788909711702", conn: "Small" },
+        { style: "SPIN", length: "5in", size: "3mm", id: "50788909744470", conn: "Small" },
+        { style: "SPIN", length: "5in", size: "3.25mm", id: "50788909777238", conn: "Small" },
+        { style: "SPIN", length: "5in", size: "3.5mm", id: "50788909810006", conn: "Small" },
+        { style: "SPIN", length: "5in", size: "3.75mm", id: "50788909842774", conn: "Small" },
+        { style: "SPIN", length: "5in", size: "4mm", id: "50788909875542", conn: "Small" },
+        { style: "SPIN", length: "5in", size: "4.5mm", id: "50788909908310", conn: "Small" },
+        { style: "SPIN", length: "5in", size: "5mm", id: "50788909941078", conn: "Small" },
+        { style: "SPIN", length: "5in", size: "5.5mm", id: "50788909973846", conn: "Large" },
+        { style: "SPIN", length: "5in", size: "6mm", id: "50788910006614", conn: "Large" },
+        { style: "SPIN", length: "5in", size: "6.5mm", id: "50788910039382", conn: "Large" },
+        { style: "SPIN", length: "5in", size: "7mm", id: "50788910072150", conn: "Large" },
+        { style: "SPIN", length: "5in", size: "7.5mm", id: "50788910104918", conn: "Large" },
+        { style: "SPIN", length: "5in", size: "8mm", id: "50788910137686", conn: "Large" },
+        { style: "SPIN", length: "5in", size: "9mm", id: "50788910170454", conn: "Large" },
+        { style: "SPIN", length: "5in", size: "10mm", id: "50788910203222", conn: "Large" },
+        { style: "TWIST", length: "3in", size: "1.5mm", id: "50788910399830", conn: "Mini" },
+        { style: "TWIST", length: "3in", size: "1.75mm", id: "50788910432598", conn: "Mini" },
+        { style: "TWIST", length: "3in", size: "2mm", id: "50788910465366", conn: "Mini" },
+        { style: "TWIST", length: "3in", size: "2.25mm", id: "50788910498134", conn: "Mini" },
+        { style: "TWIST", length: "3in", size: "2.5mm", id: "50788910530902", conn: "Mini" },
+        { style: "TWIST", length: "3in", size: "2.75mm", id: "50788910563670", conn: "Mini" },
+        { style: "TWIST", length: "3in", size: "3mm", id: "50788910596438", conn: "Mini" },
+        { style: "TWIST", length: "3in", size: "3.25mm", id: "50788910629206", conn: "Mini" },
+        { style: "TWIST", length: "3in", size: "3.5mm", id: "50788910661974", conn: "Small" },
+        { style: "TWIST", length: "3in", size: "3.75mm", id: "50788910694742", conn: "Small" },
+        { style: "TWIST", length: "3in", size: "4mm", id: "50788910727510", conn: "Small" },
+        { style: "TWIST", length: "3in", size: "4.5mm", id: "50788910760278", conn: "Small" },
+        { style: "TWIST", length: "3in", size: "5mm", id: "50788910793046", conn: "Small" },
+        { style: "TWIST", length: "3in", size: "5.5mm", id: "50788910825814", conn: "Large" },
+        { style: "TWIST", length: "3in", size: "6mm", id: "50788910858582", conn: "Large" },
+        { style: "TWIST", length: "3in", size: "6.5mm", id: "50788910891350", conn: "Large" },
+        { style: "TWIST", length: "3in", size: "7mm", id: "50788910924118", conn: "Large" },
+        { style: "TWIST", length: "3in", size: "7.5mm", id: "50788910956886", conn: "Large" },
+        { style: "TWIST", length: "3in", size: "8mm", id: "50788910989654", conn: "Large" },
+        { style: "TWIST", length: "4in", size: "1.5mm", id: "50788911153494", conn: "Mini" },
+        { style: "TWIST", length: "4in", size: "1.75mm", id: "50788911186262", conn: "Mini" },
+        { style: "TWIST", length: "4in", size: "2mm", id: "50788911219030", conn: "Mini" },
+        { style: "TWIST", length: "4in", size: "2.25mm", id: "50788911251798", conn: "Mini" },
+        { style: "TWIST", length: "4in", size: "2.5mm", id: "50788911284566", conn: "Mini" },
+        { style: "TWIST", length: "4in", size: "2.75mm", id: "50788911317334", conn: "Small" },
+        { style: "TWIST", length: "4in", size: "3mm", id: "50788911350102", conn: "Small" },
+        { style: "TWIST", length: "4in", size: "3.25mm", id: "50788911382870", conn: "Small" },
+        { style: "TWIST", length: "4in", size: "3.5mm", id: "50788911415638", conn: "Small" },
+        { style: "TWIST", length: "4in", size: "3.75mm", id: "50788911448406", conn: "Small" },
+        { style: "TWIST", length: "4in", size: "4mm", id: "50788911481174", conn: "Small" },
+        { style: "TWIST", length: "4in", size: "4.5mm", id: "50788911513942", conn: "Small" },
+        { style: "TWIST", length: "4in", size: "5mm", id: "50788911546710", conn: "Small" },
+        { style: "TWIST", length: "4in", size: "5.5mm", id: "50788911579478", conn: "Large" },
+        { style: "TWIST", length: "4in", size: "6mm", id: "50788911612246", conn: "Large" },
+        { style: "TWIST", length: "4in", size: "6.5mm", id: "50788911645014", conn: "Large" },
+        { style: "TWIST", length: "4in", size: "7mm", id: "50788911677782", conn: "Large" },
+        { style: "TWIST", length: "4in", size: "7.5mm", id: "50788911710550", conn: "Large" },
+        { style: "TWIST", length: "4in", size: "8mm", id: "50788911743318", conn: "Large" },
+        { style: "TWIST", length: "4in", size: "9mm", id: "50788911776086", conn: "Large" },
+        { style: "TWIST", length: "4in", size: "10mm", id: "50788911808854", conn: "Large" },
+        { style: "TWIST", length: "5in", size: "1.5mm", id: "50788912103766", conn: "Mini" },
+        { style: "TWIST", length: "5in", size: "1.75mm", id: "50788912136534", conn: "Mini" },
+        { style: "TWIST", length: "5in", size: "2mm", id: "50788912169302", conn: "Mini" },
+        { style: "TWIST", length: "5in", size: "2.25mm", id: "50788912202070", conn: "Mini" },
+        { style: "TWIST", length: "5in", size: "2.5mm", id: "50788912234838", conn: "Mini" },
+        { style: "TWIST", length: "5in", size: "2.75mm", id: "50788912267606", conn: "Small" },
+        { style: "TWIST", length: "5in", size: "3mm", id: "50788912300374", conn: "Small" },
+        { style: "TWIST", length: "5in", size: "3.25mm", id: "50788912333142", conn: "Small" },
+        { style: "TWIST", length: "5in", size: "3.5mm", id: "50788912365910", conn: "Small" },
+        { style: "TWIST", length: "5in", size: "3.75mm", id: "50788912398678", conn: "Small" },
+        { style: "TWIST", length: "5in", size: "4mm", id: "50788912431446", conn: "Small" },
+        { style: "TWIST", length: "5in", size: "4.5mm", id: "50788912464214", conn: "Small" },
+        { style: "TWIST", length: "5in", size: "5mm", id: "50788912496982", conn: "Small" },
+        { style: "TWIST", length: "5in", size: "5.5mm", id: "50788912529750", conn: "Large" },
+        { style: "TWIST", length: "5in", size: "6mm", id: "50788912562518", conn: "Large" },
+        { style: "TWIST", length: "5in", size: "6.5mm", id: "50788912595286", conn: "Large" },
+        { style: "TWIST", length: "5in", size: "7mm", id: "50788912628054", conn: "Large" },
+        { style: "TWIST", length: "5in", size: "7.5mm", id: "50788912660822", conn: "Large" },
+        { style: "TWIST", length: "5in", size: "8mm", id: "50788912693590", conn: "Large" },
+        { style: "TWIST", length: "5in", size: "9mm", id: "50788912726358", conn: "Large" },
+        { style: "TWIST", length: "5in", size: "10mm", id: "50788912759126", conn: "Large" },
+        { style: "Forté", length: "4in", size: "2.75mm", id: "52379037204822", conn: "Small" },
+        { style: "Forté", length: "4in", size: "3mm", id: "52379037237590", conn: "Small" },
+        { style: "Forté", length: "4in", size: "3.25mm", id: "52379037270358", conn: "Small" },
+        { style: "Forté", length: "4in", size: "3.5mm", id: "52379037303126", conn: "Small" },
+        { style: "Forté", length: "4in", size: "3.75mm", id: "52379037335894", conn: "Small" },
+        { style: "Forté", length: "4in", size: "4mm", id: "52379037368662", conn: "Small" },
+        { style: "Forté", length: "4in", size: "4.5mm", id: "52379037401430", conn: "Small" },
+        { style: "Forté", length: "4in", size: "5mm", id: "52379037434198", conn: "Small" },
+        { style: "Forté", length: "4in", size: "5.5mm", id: "52379037466966", conn: "Large" },
+        { style: "Forté", length: "4in", size: "6mm", id: "52379037499734", conn: "Large" },
+        { style: "Forté", length: "4in", size: "6.5mm", id: "52379037532502", conn: "Large" },
+        { style: "Forté", length: "4in", size: "7mm", id: "52379037565270", conn: "Large" },
+        { style: "Forté", length: "4in", size: "8mm", id: "52379037598038", conn: "Large" },
+        { style: "Forté", length: "4in", size: "9mm", id: "52379037630806", conn: "Large" },
+        { style: "Forté", length: "4in", size: "10mm", id: "52379037663574", conn: "Large" }];
+    const DB_CABLES = [{ type: "SWIV360", length: "2in (Set of 3)", id: "50788904304982", conn: "Small" },
+                       { type: "SWIV360", length: "5in", id: "50788904337750", conn: "Small" },
+                       { type: "SWIV360", length: "6in", id: "50788904370518", conn: "Small" },
+                       { type: "SWIV360", length: "8in", id: "50788904403286", conn: "Small" },
+                       { type: "SWIV360", length: "14in", id: "50788904436054", conn: "Small" },
+                       { type: "SWIV360", length: "22in", id: "50788904468822", conn: "Small" },
+                       { type: "SWIV360", length: "30in", id: "50788904501590", conn: "Small" },
+                       { type: "SWIV360", length: "37in", id: "50788904534358", conn: "Small" },
+                       { type: "SWIV360", length: "50in", id: "50788904567126", conn: "Small" },
+                       { type: "SWIV360", length: "2in (Set of 3)", id: "50788904599894", conn: "Large" },
+                       { type: "SWIV360", length: "5in", id: "50788904665430", conn: "Large" },
+                       { type: "SWIV360", length: "6in", id: "50788904698198", conn: "Large" },
+                       { type: "SWIV360", length: "8in", id: "50788904730966", conn: "Large" },
+                       { type: "SWIV360", length: "14in", id: "50788904763734", conn: "Large" },
+                       { type: "SWIV360", length: "22in", id: "50788904796502", conn: "Large" },
+                       { type: "SWIV360", length: "30in", id: "50788904829270", conn: "Large" },
+                       { type: "SWIV360", length: "37in", id: "50788904862038", conn: "Large" },
+                       { type: "SWIV360", length: "50in", id: "50788904894806", conn: "Large" },
+                       { type: "Red Lace", length: "2in (Set of 3)", id: "50788905058646", conn: "Mini" },
+                       { type: "Red Lace", length: "5in", id: "50788905091414", conn: "Mini" },
+                       { type: "Red Lace", length: "6in", id: "50788905124182", conn: "Mini" },
+                       { type: "Red Lace", length: "8in", id: "50788905156950", conn: "Mini" },
+                       { type: "Red Lace", length: "14in", id: "50788905189718", conn: "Mini" },
+                       { type: "Red Lace", length: "22in", id: "50788905222486", conn: "Mini" },
+                       { type: "Red Lace", length: "30in", id: "50788905255254", conn: "Mini" },
+                       { type: "Red Lace", length: "37in", id: "50788905288022", conn: "Mini" },
+                       { type: "Red Lace", length: "8in", id: "50788905320790", conn: "Small" },
+                       { type: "Red Lace", length: "14in", id: "50788905353558", conn: "Small" },
+                       { type: "Red Lace", length: "22in", id: "50788905386326", conn: "Small" },
+                       { type: "Red Lace", length: "30in", id: "50788905419094", conn: "Small" },
+                       { type: "Red Lace", length: "37in", id: "50788905451862", conn: "Small" },
+                       { type: "Red Lace", length: "50in", id: "50788905484630", conn: "Small" },
+                       { type: "Red Lace", length: "8in", id: "50788905517398", conn: "Large" },
+                       { type: "Red Lace", length: "14in", id: "50788905550166", conn: "Large" },
+                       { type: "Red Lace", length: "22in", id: "50788905582934", conn: "Large" },
+                       { type: "Red Lace", length: "30in", id: "50788905615702", conn: "Large" },
+                       { type: "Red Lace", length: "37in", id: "50788905648470", conn: "Large" },
+                       { type: "Red Lace", length: "50in", id: "50788905681238", conn: "Large" },
+                       { type: "Blue X-Flex", length: "2in (Set of 3)", id: "50788906205526", conn: "Small" },
+                       { type: "Blue X-Flex", length: "5in", id: "50788906238294", conn: "Small" },{
+                           type: "Blue X-Flex", length: "6in", id: "50788906271062", conn: "Small" },
+                       { type: "Blue X-Flex", length: "8in", id: "50788906303830", conn: "Small" },
+                       { type: "SPIN Swivel Nylon", length: "8in", id: "50788906664278", conn: "Small" },{
+                           type: "SPIN Swivel Nylon", length: "14in", id: "50788906697046", conn: "Small" },
+                       { type: "SPIN Swivel Nylon", length: "22in", id: "50788906729814", conn: "Small" },
+                       { type: "SPIN Swivel Nylon", length: "30in", id: "50788906762582", conn: "Small" },
+                       { type: "SPIN Swivel Nylon", length: "37in", id: "50788906795350", conn: "Small" },
+                       { type: "SPIN Swivel Nylon", length: "50in", id: "50788906828118", conn: "Small" },
+                       { type: "SPIN Swivel Nylon", length: "8in", id: "50788906860886", conn: "Large" },
+                       { type: "SPIN Swivel Nylon", length: "14in", id: "50788906893654", conn: "Large" },
+                       { type: "SPIN Swivel Nylon", length: "22in", id: "50788906926422", conn: "Large" },
+                       { type: "SPIN Swivel Nylon", length: "30in", id: "50788906959190", conn: "Large" },
+                       { type: "SPIN Swivel Nylon", length: "37in", id: "50788906991958", conn: "Large" },
+                       { type: "SPIN Swivel Nylon", length: "50in", id: "50788907024726", conn: "Large" }];
+    const ADAPTERS = {"Large_to_Small": "50788912955734","Small_to_Mini": "50788912988502"};
+    const UPSELLS = {"Small": "52378839777622",
+                     "Large": "52378839810390"};
+    // App state flagslet activeStyle = "TWIST";
+    let activeCableType = "SWIV360";
+    let targetLink = "";
+    function selectTipStyle(styleName) {document.querySelectorAll("[id^='style-']").forEach(el => el.classList.remove('selected'));
+             document.getElementById(style-${styleName.toLowerCase().replace('é','e')}).classList.add('selected');activeStyle = styleName;
+                                        
+            // Render out available lengths matching that material catalogconst lengthMenu = document.getElementById("tipLength");
+            let lengths = [...new Set(DB_TIPS.filter(t => t.style === activeStyle).map(t => t.length))];
+            lengthMenu.innerHTML = lengths.map(l => <option value="${l}">${l} long</option>).join("");
+            populateDiameters();}
+    function populateDiameters() {const selectedLen = document.getElementById("tipLength").value;
+                                const diaMenu = document.getElementById("tipDiameter");
+                    let targetTips = DB_TIPS.filter(t => t.style === activeStyle && t.length === selectedLen);
+                    diaMenu.innerHTML = targetTips.map(t => <option value="${t.id}" data-conn="${t.conn}">${t.size} [${t.conn} Connector]</option>).join("");
+                        updateCableLengths();}
+    function selectCableType(cableTypeName) {document.querySelectorAll("[id^='cable-']").forEach(el => el.classList.remove('selected'));
+                                             let searchId = "swiv360";if(cableTypeName === "Red Lace") searchId = "red";
+                                             if(cableTypeName === "Blue X-Flex") searchId = "blue";
+                                             if(cableTypeName === "SPIN Swivel Nylon") searchId = "spin";
+                                             document.getElementById(cable-${searchId}).classList.add('selected');
+                                             activeCableType = cableTypeName;updateCableLengths();}
+    function updateCableLengths() {const cableLenMenu = document.getElementById("cableLength");
+// Pull cables belonging to current selected style categorylet availableCables = DB_CABLES.filter(c => c.type === activeCableType);
+                                   cableLenMenu.innerHTML = availableCables.map(c =><option value="${c.id}" data-conn="${c.conn}">${c.length} (${c.conn} Connector)</option>).join("");evaluateSystem();}
+    // --- 2. LOGIC MATCH ENGINE RULES ---
+            function evaluateSystem() {const tipEl = document.getElementById("tipDiameter");
+                                       const cableEl = document.getElementById("cableLength");
+                                       if(!tipEl.value || !cableEl.value) return;
+                                       const tipConn = tipEl.options[tipEl.selectedIndex].getAttribute("data-conn");
+                                       const cableConn = cableEl.options[cableEl.selectedIndex].getAttribute("data-conn");
+                                       const alertDiv = document.getElementById("compatibilityAlert");
+                                       const upsellWrapper = document.getElementById("upsellWrapper");
+                                       alertDiv.className = "alert-box"; 
+    // Reset states
+        let cartItems = [${tipEl.value}:1, ${cableEl.value}:1];
+                                       let setupValid = true;
+                                       if (tipConn === cableConn) {alertDiv.innerText = ✅ Perfect Combination! Both components run natively on the ChiaoGoo '${tipConn}' platform.;
+                                                                   alertDiv.classList.add("success");} 
+                                       else if (tipConn === "Large" && cableConn === "Small") {alertDiv.innerText = 💡 Mix & Match Configuration: You paired a Large Tip with a Small Cable. A 'Large to Small Adaptor' has been automatically added to make them fit perfectly.;
+    alertDiv.classList.add("warning");cartItems.push(${ADAPTERS.Large_to_Small}:1);}
+                                       else if (tipConn === "Small" && cableConn === "Mini") {alertDiv.innerText = 💡 Mix & Match Configuration: You paired a Small Tip with a Mini Cable. A 'Small to Mini Adaptor' has been automatically added to make them fit perfectly.;
+                                                alertDiv.classList.add("warning");cartItems.push(${ADAPTERS.Small_to_Mini}:1);}
+                                       else {alertDiv.innerText = ⚠️ Incompatible Choice: There is no standard adaptor pathway to bridge a ${tipConn} tip directly with a ${cableConn} cable size footprint.;
+                                             alertDiv.classList.add("warning");setupValid = false;}
+                // Handle Dynamic Swivel Upsell 
+                                       Target Renderingif(setupValid && UPSELLS[tipConn]) {upsellWrapper.style.display = "flex";
+                                                                                           if(document.getElementById("swivelUpsell").checked) {cartItems.push(${UPSELLS[tipConn]}:1);}}
+                                       else {upsellWrapper.style.display = "none";
+                                             document.getElementById("swivelUpsell").checked = false;}
+                                       targetLink = "thelittleknittingcompany.co.uk" + cartItems.join(",");}
+                                   function triggerShopifyRedirect() {window.location.href = targetLink;}
+                                   // Launch execution matrix sequenceselectTipStyle("TWIST");
