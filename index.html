@@ -106,14 +106,6 @@
             outline: none;
             border-color: #960057;
         }
-        <!-- COMPATIBILITY READOUTS & SAFETY CHECKBOX -->
-        <div id="compatibilityAlert" class="alert-box success"></div>
-    
-        <div id="safetyCheckboxContainer" style="display: none; background-color: #FFF9E6; border: 1px solid #FCEBB6; border-top: none; padding: 0px 15px 15px 15px; border-radius: 0 0 6px 6px; font-size: 13px; margin-top: -20px; margin-bottom: 15px; align-items: center; gap: 10px;">
-        <input type="checkbox" id="safetyAcknowledge" onchange="toggleSafetyApproval()" style="width: 18px; height: 18px; cursor: pointer; margin: 0; accent-color: #960057;">
-        <label for="safetyAcknowledge" style="margin: 0; cursor: pointer; font-weight: 500; color: #8A6D1C;">I understand these parts are not natively compatible, but I wish to proceed anyway.</label>
-        </div>
-
         
         /* Message Layout Statuses */
         .alert-box { padding: 12px 15px; border-radius: 6px; font-size: 13px; margin-top: 20px; display: none; line-height: 1.5; }
@@ -208,8 +200,13 @@
     <label for="cableLength">Select Cable Length:</label>
     <select id="cableLength" onchange="evaluateSystem()"></select>
 
-    <!-- COMPATIBILITY READOUTS -->
-    <div id="compatibilityAlert" class="alert-box success"></div>
+        <!-- COMPATIBILITY READOUTS & SAFETY CHECKBOX -->
+        <div id="compatibilityAlert" class="alert-box success"></div>
+    
+        <div id="safetyCheckboxContainer" style="display: none; background-color: #FFF9E6; border: 1px solid #FCEBB6; border-top: none; padding: 0px 15px 15px 15px; border-radius: 0 0 6px 6px; font-size: 13px; margin-top: -20px; margin-bottom: 15px; align-items: center; gap: 10px;">
+        <input type="checkbox" id="safetyAcknowledge" onchange="toggleSafetyApproval()" style="width: 18px; height: 18px; cursor: pointer; margin: 0; accent-color: #960057;">
+        <label for="safetyAcknowledge" style="margin: 0; cursor: pointer; font-weight: 500; color: #8A6D1C;">I understand these parts are not natively compatible, but I wish to proceed anyway.</label>
+        </div>
 
     <!-- UPSELL TARGET MAPPING -->
     <div class="upsell-container" id="upsellWrapper">
