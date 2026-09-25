@@ -69,7 +69,21 @@ if is_valid:
     shopify_checkout_url = f"https://thelittleknittingcompany.co.uk{cart_slug}"
     
     st.write("---")
-   # DO NOT use a standard st.button with custom click logic.
-    # Use this exact native component instead:
-    st.link_button("🛒 Send Complete Set to Shop Cart", shopify_checkout_url, use_container_width=True)
+   # This creates a stylized button that completely escapes the Streamlit sandbox
+button_html = f"""
+    <a href="{shopify_checkout_url}" target="_top" style="
+        display: block;
+        width: 100%;
+        text-align: center;
+        background-color: #FF4B4B;
+        color: white;
+        padding: 10px 0px;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: bold;
+    ">🛒 Send Complete Set to Shop Cart</a>
+"""
+
+st.markdown(button_html, unsafe_allow_html=True)
+
 
