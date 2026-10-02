@@ -1,17 +1,24 @@
 {
-  "short_name": "KnitConfig",
-  "name": "ChiaoGoo Needle Configurator",
+  "short_name": "ChiaoGooApp",
+  "name": "ChiaoGoo Project Workspace",
+  "description": "Select interchangeable needle tips, cables, and adaptors with instant compatibility checks.",
   "icons": [
     {
-      "src": "https://www.thelittleknittingcompany.co.uk/cdn/shop/files/the-little-knitting-company-logo.png?v=1756889583",
-      "type": "image/jpeg",
-      "sizes": "512x512",
+      "src": "/tlkc-icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
       "purpose": "any maskable"
+    },
+    {
+      "src": "/tlkc-icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any"
     }
   ],
   "start_url": "/",
   "background_color": "#f4f6f9",
   "theme_color": "#960057",
-  "display": "standalone",
+  "display": "minimal-ui",
   "orientation": "portrait"
 }
