@@ -3,8 +3,8 @@ const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
   '/manifest.json',
-  '/tlkc-icon-192.png',
-  '/tlkc-icon-512.png'
+  '/tlkc-logo-192.png',
+  '/tlkc-logo-512.png'
 ];
 
 // Install: Open cache and store critical structural files
