@@ -49,6 +49,7 @@
         .carousel-item.selected { background: var(--brand-light); border-color: var(--brand); color: var(--brand); }
         .carousel-item.disabled { opacity: 0.25; pointer-events: none; background: #F5F5F5; }
 
+
         /* Controls & Selectors Grid */
         .control-row { display: flex; gap: 10px; align-items: center; margin-top: 10px; margin-bottom: 15px; }
         select { flex: 1; padding: 10px; border-radius: 8px; border: 1px solid #CCC; font-size: 14px; background: #FFF; font-weight: 500; }
@@ -179,7 +180,6 @@
             flex-direction: column;
             align-items: stretch;
           }
-        }
 
 
         #tips-section-group {
@@ -285,7 +285,7 @@
           font-size: 13px;
         }
 
-		.compatibility-modal-attention {
+         .compatibility-modal-attention {
           background: #FFF8E8;
           border-left: 4px solid #D99000;
           border-radius: 8px;
@@ -512,8 +512,8 @@
     <span class="carousel-label">✨ Select Needle Material & Style:</span>
     <div class="carousel-wrapper" id="carousel-tip-styles">
             <div id="tipstyle-twist" class="carousel-item selected" onclick="selectTipStyle('TWIST')">TWIST (Steel)</div>
+			      <div id="tipstyle-Forté" class="carousel-item" onclick="selectTipStyle('Forté')">Forté (Carbon Fiber)</div>
             <div id="tipstyle-spin" class="carousel-item" onclick="selectTipStyle('SPIN')">SPIN (Bamboo)</div>
-			<div id="tipstyle-Forté" class="carousel-item" onclick="selectTipStyle('Forté')">Forté (Carbon Fiber)</div>
             <div id="tipstyle-quads" class="carousel-item" onclick="selectTipStyle('QUADS')">QUADS (SS Lace)</div>
         </div>
 
@@ -534,10 +534,11 @@
     <div id="cables-section-group">
         <span class="carousel-label">⛓️ Select Cable Category & Material:</span>
         <div class="carousel-wrapper" id="carousel-cable-types">
-            <div id="cabletype-swiv360" class="carousel-item" onclick="selectCableType('SWIV360')">SWIV360 (Silver)</div>
-            <div id="cabletype-red" class="carousel-item selected" onclick="selectCableType('Red Lace')">Red Lace (Twist)</div>
-            <div id="cabletype-blue" class="carousel-item" onclick="selectCableType('Blue X-Flex')">Blue X-Flex</div>
-            <div id="cabletype-spin" class="carousel-item" onclick="selectCableType('SPIN Swivel Nylon')">SPIN Swivel</div>
+            <div id="cabletype-swiv300" class="carousel-item" data-type="SWIV360" onclick="selectCableType('SWIV360')">SWIV360 (Silver)</div>
+            <div id="cabletype-red" class="carousel-item selected" data-type="Red Lace" onclick="selectCableType('Red Lace')">Red Lace (Twist)</div>
+            <div id="cabletype-blue" class="carousel-item" data-type="Blue X-Flex" onclick="selectCableType('Blue X-Flex')">Blue X-Flex</div>
+            <div id="cabletype-spin" class="carousel-item" data-type="SPIN Swivel Nylon" onclick="selectCableType('SPIN Swivel Nylon')">SPIN Swivel</div>
+
         </div>
 
         <span class="carousel-label">📏 Select Cable Project Length:</span>
@@ -596,8 +597,6 @@
         <button id="compatibilityDetailsToggle" type="button" class="compatibility-details-toggle" onclick="toggleCompatibilityDetails()">
         Show full compatibility details
       </button>
-
-
 
       <div id="compatibilityDetails" class="compatibility-details"></div>
 
@@ -1041,8 +1040,6 @@
         };
     }
 
-
-
     function selectTipStyle(style) {
         activeTipStyle = style;
         document.querySelectorAll("#carousel-tip-styles .carousel-item").forEach(el => {
@@ -1050,6 +1047,7 @@
         });
         renderTipLengths();
     }
+
     function renderTipLengths() {
         const wrapper = document.getElementById("carousel-tip-lengths");
         let lengths = [...new Set(DB_TIPS.filter(t => t.style === activeTipStyle).map(t => t.length))];
@@ -1082,17 +1080,19 @@
       }
 
       diaMenu.innerHTML = targetTips.map(t => `
-                <option value="${t.id}" data-conn="${t.conn}">${t.size} [${t.conn} Connector]</option>
+                <option value="${t.id}" data-conn="${t.conn}">${t.size} (${t.conn})</option>
             `).join("");
     }
 
-    function selectCableType(type) {
-        activeCableType = type;
-        document.querySelectorAll("#carousel-cable-types .carousel-item").forEach(el => {
-            el.classList.toggle("selected", el.innerText.includes(type));
-        });
-        updateCableDropdown();
-    }
+function selectCableType(type) {
+    activeCableType = type;
+    document.querySelectorAll("#carousel-cable-types .carousel-item").forEach(el => {
+        // Clean, direct equality check
+        el.classList.toggle("selected", el.dataset.type === type);
+    });
+    updateCableDropdown();
+}
+
 
     function updateCableDropdown() {
       const cableMenu = document.getElementById("cableLength");
@@ -1107,7 +1107,7 @@
       }
 
       cableMenu.innerHTML = availableCables.map(c => `
-                <option value="${c.id}" data-conn="${c.conn}">${c.length} (${c.conn} Connector)</option>
+                <option value="${c.id}" data-conn="${c.conn}">${c.length} (${c.conn})</option>
             `).join("");
     }
 
