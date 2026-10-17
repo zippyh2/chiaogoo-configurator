@@ -4,24 +4,45 @@ const stockAvailabilityCache = new Map();
 
 
 export async function checkStock(variantId) {
-  if (stockAvailabilityCache.has(variantId)) {
-    //console.log("[checkStock] cache hit:", variantId);
-    return stockAvailabilityCache.get(variantId);
-  }
+  const stockResults = await checkStocks([variantId]);
 
-  const stockRequest = fetchVariantAvailability(variantId);
-
-  stockAvailabilityCache.set(variantId, stockRequest);
-
-  return stockRequest;
+  return stockResults.get(variantId) ?? null;
 }
 
 
-async function fetchVariantAvailability(variantId) {
+export async function checkStocks(variantIds) {
+  const results = new Map();
+  const idsToFetch = [];
+
+  variantIds.forEach(variantId => {
+    if (stockAvailabilityCache.has(variantId)) {
+      results.set(variantId, stockAvailabilityCache.get(variantId));
+    } else {
+      idsToFetch.push(variantId);
+    }
+  });
+
+  if (idsToFetch.length === 0) {
+    return results;
+  }
+
+  const fetchedResults = await fetchVariantAvailabilities(idsToFetch);
+
+  fetchedResults.forEach((availableForSale, variantId) => {
+    stockAvailabilityCache.set(variantId, availableForSale);
+    results.set(variantId, availableForSale);
+  });
+
+  return results;
+}
+
+
+async function fetchVariantAvailabilities(variantIds) {
   const query = `
-    query getVariantStock($id: ID!) {
-      node(id: $id) {
+    query getVariantStocks($ids: [ID!]!) {
+      nodes(ids: $ids) {
         ... on ProductVariant {
+          id
           title
           availableForSale
         }
@@ -31,9 +52,6 @@ async function fetchVariantAvailability(variantId) {
 
   const url = `${SHOPIFY_STORE_URL}/api/2025-01/graphql.json`;
 
-  //console.log("[checkStock] fetching:", variantId);
- // console.log("[checkStock] url:", url);
-
   const response = await fetch(url, {
     method: 'POST',
     headers: {
@@ -42,24 +60,41 @@ async function fetchVariantAvailability(variantId) {
     },
     body: JSON.stringify({
       query: query,
-      variables: { id: variantId }
+      variables: { ids: variantIds }
     }),
   });
 
-  //console.log("[checkStock] response status:", response.status, response.statusText);
-
   const result = await response.json();
 
-  //console.log("[checkStock] raw result:", result);
-
   if (result.errors) {
-    console.error("[checkStock] Shopify GraphQL errors:", result.errors);
+    console.error("[checkStocks] Shopify GraphQL errors:", result.errors);
   }
 
-  if (!result.data || !result.data.node) {
-    console.warn("[checkStock] No Shopify variant found for:", variantId);
-    return null;
+  const availabilityById = new Map();
+
+  if (!result.data || !Array.isArray(result.data.nodes)) {
+    console.warn("[checkStocks] No Shopify nodes returned for:", variantIds);
+    variantIds.forEach(variantId => availabilityById.set(variantId, null));
+    return availabilityById;
   }
 
-  return result.data.node.availableForSale;
+  result.data.nodes.forEach((node, index) => {
+    const requestedId = variantIds[index];
+
+    if (!node) {
+      console.warn("[checkStocks] No Shopify variant found for:", requestedId);
+      availabilityById.set(requestedId, null);
+      return;
+    }
+
+    availabilityById.set(node.id || requestedId, node.availableForSale);
+  });
+
+  variantIds.forEach(variantId => {
+    if (!availabilityById.has(variantId)) {
+      availabilityById.set(variantId, null);
+    }
+  });
+
+  return availabilityById;
 }

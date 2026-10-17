@@ -3,7 +3,7 @@
 
 import {state} from "../state.js";
 import {DB_CABLES} from "../catalogue/data.js";
-import {checkStock} from "../apiQuery.js";
+import {checkStocks} from "../apiQuery.js";
 
 
 export function selectCableType(type) {
@@ -31,31 +31,26 @@ export async function updateCableDropdown() {
   cableMenu.disabled = true;
 
   try {
-    const cablesWithStock = await Promise.all(
-      availableCables.map(async cable => {
-        const shopifyVariantId = cable.id.startsWith("gid://shopify/ProductVariant/")
-          ? cable.id
-          : `gid://shopify/ProductVariant/${cable.id}`;
+    const cablesWithVariantIds = availableCables.map(cable => ({
+      ...cable,
+      shopifyVariantId: cable.id.startsWith("gid://shopify/ProductVariant/")
+        ? cable.id
+        : `gid://shopify/ProductVariant/${cable.id}`
+    }));
 
-        try {
-          const availableForSale = await checkStock(shopifyVariantId);
-
-          return {
-            ...cable,
-            availableForSale,
-            inStock: availableForSale !== false
-          };
-        } catch (error) {
-          console.error("[updateCableDropdown] stock check failed for cable:", cable, error);
-
-          return {
-            ...cable,
-            availableForSale: null,
-            inStock: true
-          };
-        }
-      })
+    const availabilityById = await checkStocks(
+      cablesWithVariantIds.map(cable => cable.shopifyVariantId)
     );
+
+    const cablesWithStock = cablesWithVariantIds.map(cable => {
+      const availableForSale = availabilityById.get(cable.shopifyVariantId);
+
+      return {
+        ...cable,
+        availableForSale,
+        inStock: availableForSale !== false
+      };
+    });
 
     cableMenu.innerHTML = cablesWithStock.map(c => `
               <option

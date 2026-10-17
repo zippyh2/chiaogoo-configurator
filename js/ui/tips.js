@@ -5,7 +5,7 @@
 
 import {state} from "../state.js";
 import {DB_TIPS} from "../catalogue/data.js";
-import {checkStock} from "../apiQuery.js";
+import {checkStocks} from "../apiQuery.js";
 
 
 export function selectTipStyle(style) {
@@ -63,41 +63,26 @@ async function populateTipDiameters() {
   diaMenu.disabled = true;
 
   try {
-    const tipsWithStock = await Promise.all(
-      targetTips.map(async tip => {
-        const shopifyVariantId = tip.id.startsWith("gid://shopify/ProductVariant/")
-          ? tip.id
-          : `gid://shopify/ProductVariant/${tip.id}`;
+    const tipsWithVariantIds = targetTips.map(tip => ({
+      ...tip,
+      shopifyVariantId: tip.id.startsWith("gid://shopify/ProductVariant/")
+        ? tip.id
+        : `gid://shopify/ProductVariant/${tip.id}`
+    }));
 
-
-        try {
-          const availableForSale = await checkStock(shopifyVariantId);
-
-        //  console.log("[populateTipDiameters] stock result:", {
-        //    id: tip.id,
-       //     size: tip.size,
-        //    availableForSale
-       //   });
-
-          return {
-            ...tip,
-            availableForSale,
-            inStock: availableForSale !== false
-          };
-        } catch (error) {
-          console.error("[populateTipDiameters] stock check failed for tip:", tip, error);
-
-          return {
-            ...tip,
-            availableForSale: null,
-            inStock: true
-          };
-        }
-      })
+    const availabilityById = await checkStocks(
+      tipsWithVariantIds.map(tip => tip.shopifyVariantId)
     );
 
-    //console.log("[populateTipDiameters] tipsWithStock:", tipsWithStock);
-    //console.table(tipsWithStock);
+    const tipsWithStock = tipsWithVariantIds.map(tip => {
+      const availableForSale = availabilityById.get(tip.shopifyVariantId);
+
+      return {
+        ...tip,
+        availableForSale,
+        inStock: availableForSale !== false
+      };
+    });
 
     diaMenu.innerHTML = tipsWithStock.map(t => `
             <option
@@ -109,7 +94,6 @@ async function populateTipDiameters() {
             </option>
         `).join("");
 
-    //console.log("[populateTipDiameters] final option count:", diaMenu.options.length);
   } catch (error) {
     console.error("[populateTipDiameters] unexpected failure:", error);
 
