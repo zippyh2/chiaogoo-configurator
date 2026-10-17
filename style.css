@@ -1,0 +1,484 @@
+
+         * {
+           box-sizing: border-box;
+         }
+
+        :root { --brand: #960057; --brand-light: #FDF2F7; --gray-bg: #F8F9FA; --text: #333333; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #F0F2F5; color: var(--text); padding: 15px; margin: 0; }
+        .workspace-card {
+          background: #FFFFFF;
+          border-radius: 12px;
+          padding: 20px;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+          width: 100%;
+          max-width: 550px;
+          margin: 0 auto;
+          border: 1px solid #EAEAEA;
+          overflow: hidden;
+        }
+        h2 { color: var(--brand); margin-top: 0; font-size: 22px; text-align: center; border-bottom: 2px solid var(--brand-light); padding-bottom: 10px; }
+        .workspace-intro {
+          background: var(--brand-light);
+          border-left: 4px solid var(--brand);
+          border-radius: 8px;
+          padding: 10px 12px;
+          margin: 0 0 16px 0;
+          font-size: 13px;
+          line-height: 1.4;
+          color: #555555;
+        }
+
+        /* Horizontal Swiping Carousels */
+        .carousel-label { font-weight: bold; margin: 15px 0 5px 0; color: #555555; display: block; font-size: 14px; }
+        .carousel-wrapper { display: flex; gap: 8px; overflow-x: auto; padding: 5px 2px 10px 2px; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
+        .carousel-item { flex: 0 0 auto; scroll-snap-align: start; padding: 10px 16px; border: 1px solid #DDD; border-radius: 20px; background: #FFF; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: all 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .carousel-item.selected { background: var(--brand-light); border-color: var(--brand); color: var(--brand); }
+        .carousel-item.disabled { opacity: 0.25; pointer-events: none; background: #F5F5F5; }
+
+
+        /* Controls & Selectors Grid */
+        .control-row { display: flex; gap: 10px; align-items: center; margin-top: 10px; margin-bottom: 15px; }
+        select { flex: 1; padding: 10px; border-radius: 8px; border: 1px solid #CCC; font-size: 14px; background: #FFF; font-weight: 500; }
+        .qty-select { width: 70px; flex: none; }
+        .add-action-btn { padding: 10px 15px; background: var(--brand); color: #FFF; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px; }
+        .add-action-btn:hover { opacity: 0.9; }
+
+        /* The Project Micro-Cart Box */
+        .basket-container { background: #FFF; border: 2px solid var(--brand); border-radius: 10px; padding: 15px; margin-top: 20px; }
+        .basket-title { font-weight: bold; color: var(--brand); margin-top: 0; margin-bottom: 10px; font-size: 15px; display: flex; justify-content: space-between; }
+        .basket-list { list-style: none; padding: 0; margin: 0; max-height: 150px; overflow-y: auto; }
+         .basket-item {
+           display: flex;
+           justify-content: space-between;
+           align-items: center;
+           gap: 8px;
+           padding: 6px 0;
+           border-bottom: 1px dashed #EEE;
+           font-size: 13px;
+         }
+
+         .basket-item span {
+           min-width: 0;
+           overflow-wrap: anywhere;
+         }
+
+         .basket-item:last-child { border-bottom: none; }
+        .remove-btn { color: #FF4D4D; background: none; border: none; font-weight: bold; cursor: pointer; padding: 0 5px; font-size: 14px; }
+
+        /* Master Checkout Action Trigger */
+        .checkout-btn { width: 100%; padding: 14px; background: #228B22; color: #FFF; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; margin-top: 15px; cursor: pointer; box-shadow: 0 4px 10px rgba(34,139,34,0.2); }
+        .checkout-btn:disabled { background: #CCCCCC; color: #888888; box-shadow: none; cursor: not-allowed; }
+        /* Grouped Product Selection Panels */
+        #tips-section-group,
+        #cables-section-group,
+        #accessories-section-group {
+          border: 2px solid rgba(150, 0, 87, 0.22);
+          border-radius: 12px;
+          padding: 14px;
+          margin-top: 18px;
+          background: linear-gradient(180deg, #FFFFFF 0%, #FDF7FA 100%);
+          box-shadow: 0 2px 8px rgba(150, 0, 87, 0.04);
+        }
+
+        #accessories-section-group::before {
+          content: "🧰 Accessories";
+          display: block;
+          font-size: 15px;
+          font-weight: 800;
+          color: var(--brand);
+          margin-bottom: 10px;
+          padding-bottom: 8px;
+          border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        .accessory-action-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 10px;
+          margin-top: 8px;
+        }
+
+        .accessory-action-btn {
+          border: 2px solid var(--brand);
+          background: #FFFFFF;
+          color: var(--brand);
+          border-radius: 10px;
+          padding: 12px 10px;
+          font-weight: 800;
+          cursor: pointer;
+          font-size: 14px;
+        }
+
+        .accessory-action-btn:hover {
+          background: var(--brand-light);
+        }
+
+        .accessory-modal-options {
+          display: flex;
+          gap: 8px;
+          overflow-x: auto;
+          padding: 4px 0 12px 0;
+          margin-top: 8px;
+        }
+
+        .accessory-modal-option {
+          flex: 1;
+          min-width: 130px;
+          border: 1px solid #DDDDDD;
+          background: #FFFFFF;
+          color: #333333;
+          border-radius: 20px;
+          padding: 10px 12px;
+          font-size: 13px;
+          font-weight: 700;
+          cursor: pointer;
+          white-space: nowrap;
+        }
+
+        .accessory-modal-option.selected {
+          background: var(--brand);
+          border-color: var(--brand);
+          color: #FFFFFF;
+        }
+
+        .accessory-modal-qty-row {
+          display: flex;
+          gap: 10px;
+          align-items: center;
+          margin-top: 8px;
+        }
+
+/* This target handles all mobile/tablet views (under 768px) */
+@media (max-width: 768px) {
+  select, input, button {
+    font-size: 16px !important;
+  }
+}
+
+/* Your existing target for smaller mobile phones (under 480px) */
+@media (max-width: 480px) {
+  .accessory-action-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+          .accessory-modal-qty-row {
+            flex-direction: column;
+            align-items: stretch;
+          }
+
+
+        #tips-section-group {
+          border-color: rgba(150, 0, 87, 0.35);
+          background: linear-gradient(180deg, #FFFFFF 0%, #FDF7FA 100%);
+        }
+
+        #cables-section-group {
+          border-color: rgba(34, 139, 34, 0.28);
+          background: linear-gradient(180deg, #FFFFFF 0%, #F7FCF7 100%);
+        }
+
+        #tips-section-group::before,
+        #cables-section-group::before,
+
+        #tips-section-group::before {
+          content: "✨ Needle Tips";
+          color: var(--brand);
+        }
+
+        #cables-section-group::before {
+          content: "⛓️ Cables";
+          color: #228B22;
+        }
+
+
+        #tips-section-group .carousel-label:first-of-type,
+        #cables-section-group .carousel-label:first-of-type,
+        #adaptors-section-group .carousel-label:first-of-type,
+        #swivels-section-group .carousel-label:first-of-type {
+          margin-top: 0;
+        }
+
+
+        /* Branded Compatibility Warning Modal */
+         .modal-overlay {
+           position: fixed;
+           inset: 0;
+           background: rgba(0, 0, 0, 0.45);
+           display: none;
+           align-items: center;
+           justify-content: center;
+           padding: 18px;
+           z-index: 9999;
+           overflow-y: auto;
+         }
+
+         .modal-overlay.visible {
+           display: flex;
+         }
+
+         .compatibility-modal {
+           background: #FFFFFF;
+           border-radius: 14px;
+           max-width: 460px;
+           width: 100%;
+           max-height: calc(100dvh - 36px);
+           border: 2px solid var(--brand);
+           box-shadow: 0 12px 35px rgba(0, 0, 0, 0.22);
+           overflow: hidden;
+           animation: modalPop 0.18s ease-out;
+           display: flex;
+           flex-direction: column;
+         }
+
+         .compatibility-modal-header {
+           background: var(--brand);
+           color: #FFFFFF;
+           padding: 14px 16px;
+           font-weight: 800;
+           font-size: 17px;
+           display: flex;
+           align-items: center;
+           gap: 8px;
+           flex: none;
+         }
+
+         .compatibility-modal-body {
+           padding: 16px;
+           font-size: 14px;
+           line-height: 1.45;
+           color: var(--text);
+           overflow-y: auto;
+           -webkit-overflow-scrolling: touch;
+         }
+        .compatibility-modal-message {
+          background: var(--brand-light);
+          border-left: 4px solid var(--brand);
+          border-radius: 8px;
+          padding: 12px;
+          margin: 12px 0;
+          white-space: pre-line;
+        }
+
+        .compatibility-modal-good-news {
+          background: #F1FFF1;
+          border-left: 4px solid #228B22;
+          border-radius: 8px;
+          padding: 10px 12px;
+          margin: 12px 0;
+          color: #176B17;
+          font-weight: 700;
+          font-size: 13px;
+        }
+
+         .compatibility-modal-attention {
+          background: #FFF8E8;
+          border-left: 4px solid #D99000;
+          border-radius: 8px;
+          padding: 10px 12px;
+          margin: 12px 0;
+          color: #7A4D00;
+          font-weight: 700;
+          font-size: 13px;
+          white-space: pre-line;
+        }
+
+         .compatibility-modal-note {
+          color: #666666;
+          font-size: 13px;
+          margin: 0;
+          white-space: pre-line;
+        }
+
+         .compatibility-details-toggle {
+           width: 100%;
+           border: 2px solid var(--brand);
+           background: #FFFFFF;
+           color: var(--brand);
+           border-radius: 8px;
+           font-weight: 800;
+           cursor: pointer;
+           padding: 10px 12px;
+           text-align: center;
+           font-size: 14px;
+           margin: 12px 0;
+         }
+
+         .compatibility-details-toggle:hover {
+           background: var(--brand-light);
+         }
+
+         .compatibility-details {
+           display: none;
+           margin: 8px 0 12px 0;
+           max-height: 220px;
+           overflow-y: auto;
+           border-radius: 8px;
+         }
+
+         .compatibility-details.visible {
+           display: block;
+         }
+
+         .compatibility-detail-row {
+           border-radius: 8px;
+           padding: 8px 10px;
+           margin-bottom: 6px;
+           font-size: 12px;
+           line-height: 1.35;
+         }
+
+         .compatibility-detail-row strong {
+           display: block;
+           margin-bottom: 3px;
+         }
+
+         .compatibility-detail-direct,
+         .compatibility-detail-adapter-in-basket {
+           background: #F1FFF1;
+           border-left: 4px solid #228B22;
+           color: #176B17;
+         }
+
+         .compatibility-detail-adapter-needed {
+           background: #FFF8E8;
+           border-left: 4px solid #D99000;
+           color: #7A4D00;
+         }
+
+         .compatibility-detail-fail {
+           background: #FFF0F4;
+           border-left: 4px solid var(--brand);
+           color: #5F0037;
+         }
+
+        .missing-adaptor-actions {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+          margin: 12px 0;
+        }
+
+        .missing-adaptor-btn {
+          width: 100%;
+          border: 2px solid var(--brand);
+          background: #FFFFFF;
+          color: var(--brand);
+          border-radius: 8px;
+          padding: 10px 12px;
+          font-size: 14px;
+          font-weight: 800;
+          cursor: pointer;
+          text-align: center;
+        }
+
+        .missing-adaptor-btn:hover {
+          background: var(--brand-light);
+        }
+
+        .missing-adaptor-btn.added {
+          border-color: #228B22;
+          background: #F1FFF1;
+          color: #228B22;
+          cursor: default;
+        }
+
+
+         .compatibility-modal-actions {
+           display: flex;
+           gap: 10px;
+           padding: 12px 16px 16px 16px;
+           background: #FFFFFF;
+           border-top: 1px solid #F0F0F0;
+           flex: none;
+         }
+
+        .modal-btn {
+          flex: 1;
+          border: none;
+          border-radius: 8px;
+          padding: 11px 12px;
+          font-weight: 800;
+          cursor: pointer;
+          font-size: 14px;
+        }
+
+        .modal-btn-secondary {
+          background: #F1F1F1;
+          color: #333333;
+          border: 1px solid #DDDDDD;
+        }
+
+        .modal-btn-primary {
+          background: var(--brand);
+          color: #FFFFFF;
+        }
+
+        .modal-btn:hover {
+          opacity: 0.92;
+        }
+
+        @keyframes modalPop {
+          from {
+            transform: scale(0.96);
+            opacity: 0;
+          }
+          to {
+            transform: scale(1);
+            opacity: 1;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .compatibility-modal-actions {
+            flex-direction: column;
+          }
+        }
+
+        /* 📱 MOBILE RESPONSIVE LAYOUT GUARDRAILS */
+        @media (max-width: 480px) {
+          /* 1. Stack the select rows vertically on mobile so text doesn't squish */
+          .control-row {
+            flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+                margin-bottom: 20px;
+            }
+
+            /* 2. Make the select elements and buttons fill the screen width comfortably */
+            select, .qty-select, .add-action-btn {
+                width: 100% !important;
+                box-sizing: border-box;
+            }
+
+            /* 3. Give the add button a slight height boost for easy thumb tapping */
+            .add-action-btn {
+                padding: 12px;
+                text-align: center;
+            }
+        }
+
+        /* ⛓️ PERMANENT VISIBLE CAROUSEL SCROLLBARS */
+        /* Forces scrollbars to stay visible and clear on Chrome, Safari, and Android browsers */
+        .carousel-wrapper::-webkit-scrollbar {
+            height: 6px; /* Height of the horizontal scrollbar */
+            display: block !important;
+        }
+
+        .carousel-wrapper::-webkit-scrollbar-track {
+            background: #F1F1F1;
+            border-radius: 10px;
+        }
+
+        .carousel-wrapper::-webkit-scrollbar-thumb {
+            background: #960057; /* Matches your signature berry-magenta branding */
+            border-radius: 10px;
+        }
+
+        /* Forces visible scrollbars on Firefox */
+        .carousel-wrapper {
+            scrollbar-width: thin;
+            scrollbar-color: #960057 #F1F1F1;
+        }
+
+
